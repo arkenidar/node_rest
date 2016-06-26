@@ -4,35 +4,40 @@ var app = express();
 app.use(express.static('public'));
 
 var bodyParser = require('body-parser');
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-})); 
+app.use(bodyParser.json());
 
-var messages = 
-  [
-    'first line',
-    'second line',
-    'third line',
-  ];
+var messages = ["line 1", "line 2", "line 3"];
 
-app.get('/app/messages/', function (req, res) {
-  res.json(messages);
+app.get("/app/messages/", function (req, res) {
+  res.json({"messages": messages});
 });
 
-app.get('/app/messages/:id', function (req, res) {
-  res.json(messages[req.params.id]);
+function found(found, res){
+  if(!found){
+    res.status(404);
+    res.end();
+  }
+  return found;
+}
+
+app.get("/app/messages/:id", function (req, res) {
+  if(found(req.params.id in messages, res))
+    res.json({messages: [messages[req.params.id]]});
 });
 
-app.delete('/app/messages/:id', function (req, res) {
-  messages.splice(req.params.id, 1);
-  res.json('deleted');
+app.delete("/app/messages/:id", function (req, res) {
+  if(found(req.params.id in messages, res)){
+    messages.splice(req.params.id, 1);
+    res.status(204);
+    res.end();
+  }
 });
 
-app.post('/app/messages/', function (req, res) {
-  console.log(req.body);
+app.post("/app/messages/", function (req, res) {
   messages.push(req.body.msg);
-  res.json('added');
+  res.status(201);
+  res.setHeader("Location", "/app/messages/"+(messages.length-1));
+  res.end();
 });
 
 app.listen(3000, function () {
