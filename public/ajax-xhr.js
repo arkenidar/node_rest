@@ -32,3 +32,23 @@ function getXmlHttpRequest() {
     }
   }
 }
+
+module.exports=requestJSON;
+
+function requestJSON(callback, method, url, json) {
+  
+  var data = JSON.stringify(json);
+  
+  var xmlHttp = getXmlHttpRequest();
+  var onReady = function () {
+    callback(xmlHttp, method, url);
+  };
+  
+  var headers = {};
+  headers["Accept"] = "application/json";
+  headers["Content-Type"] = "application/json";
+  
+  var async = true;
+  
+  requestDo(xmlHttp, async, method, url, data, onReady, headers);
+}

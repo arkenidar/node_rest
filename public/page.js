@@ -1,59 +1,44 @@
+var requestJSON = require("./ajax-hxr.js");
+
 function getMessages()
 {
-  json_request(myOnReady, "GET", "app/messages/");
+  requestJSON(onReady, "GET", "app/messages/");
 }
 
 function getMessage(index)
 {
-  json_request(myOnReady, "GET", "app/messages/" + index);
+  requestJSON(onReady, "GET", "app/messages/" + index);
 }
 
 function deleteMessage(index)
 {
-  json_request(myOnReady, "DELETE", "app/messages/" + index);
+  requestJSON(onReady, "DELETE", "app/messages/" + index);
 }
 
 function addMessage(message)
 {
-  json_request(myOnReady, "POST", "app/messages/", {msg: message});
+  requestJSON(onReady, "POST", "app/messages/", {msg: message});
 }
 
-function json_request(callback, method, url, json) {
-  
-  var data = JSON.stringify(json);
-  
-  var xmlHttp = getXmlHttpRequest();
-  var onReady = function () {
-    callback(xmlHttp, method, url);
-  };
-  
-  var headers = {};
-  headers["Accept"] = "application/json";
-  headers["Content-Type"] = "application/json";
-  
-  var async = true;
-  
-  requestDo(xmlHttp, async, method, url, data, onReady, headers);
-}
-
-function myOnReady(xmlHttp, method, url)
+function onReady(xhr, method, url)
 {
-  if (xmlHttp.readyState === 4)
-  {
+  
+  function getBody(s){
+    if (s.indexOf("<body>") !== -1) {
+      s = s.substring(s.indexOf("<body>") + 6, s.indexOf("</body>"))
+    }  
+    return s;
+  }
+
+  if (xhr.readyState === 4){
+    
+    document.getElementById("status").innerHTML = xhr.status;
+    
     document.getElementById("query").innerHTML = method + " " + url;
 
-    if (xmlHttp.responseText.indexOf("<body>") !== -1) {
-      s = xmlHttp.responseText.substring(xmlHttp.responseText.indexOf("<body>") + 6, xmlHttp.responseText.indexOf("</body>"))
-      document.getElementById("output").innerHTML = s;
-    } else {
-      document.getElementById("output").innerHTML = xmlHttp.responseText;
-    }
+    document.getElementById("output").innerHTML = getBody(xhr.responseText);
 
-    updateHeaders(xmlHttp);
+    var allResponseHeaders = xhr.getAllResponseHeaders().replace(new RegExp("\n", 'g'), "<br/>");
+    document.getElementById("headers").innerHTML = allResponseHeaders;
   }
-}
-
-function updateHeaders(xmlHttp) {
-  var allResponseHeaders = xmlHttp.getAllResponseHeaders().replace(new RegExp("\n", 'g'), "<br/>");
-  document.getElementById("headers").innerHTML = allResponseHeaders;
 }
