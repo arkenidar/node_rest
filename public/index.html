@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title></title>
+    </head>
+
+    <body>
+        
+        <script src="page.js"></script>
+        <script src="ajax-xhr.js"></script>
+
+        <h1>MessageBoard sample</h1>
+
+        <form name="form0">
+
+            <button type="button" name="GET0" onclick="getMessages()">LIST ALL MESSAGES</button>
+
+        </form>
+
+
+        <form name="form1">
+            Message id#: <input style="width: 4em" type="text" name="messageNumber" />
+
+            <button type="button" name="GET1" onclick="getMessage(document.form1.messageNumber.value)">GET MESSAGE</button>
+
+        </form>
+
+        <form name="form2">
+            Message id#: <input style="width: 4em" type="text" name="messageNumber" />
+
+            <button type="button" name="GET2" onclick="deleteMessage(document.form2.messageNumber.value)">DELETE MESSAGE</button>
+
+        </form>
+
+        <form name="form3">
+            Message: <input type="test" name="messageText" />
+            <button type="button" name="GET2" onclick="addMessage(document.form3.messageText.value)">ADD MESSAGE</button>
+        </form>
+
+
+        <h2>MessageBoard</h2>
+        <h3>query: </h3>
+        <div id="query" style="font-weight: bold"></div>
+        <h3>response headers</h3>
+        <i>Response filter adds 'previous-response' and 'this-response' header.</i>
+        <div id="headers" style="border: 1px solid black; color: black; height: 9em; width: 100%"></div>
+        <h3>response entity</h3>
+        <div id="output" style="border: 1px solid black; color: black; height: 18em; width: 100%"></div>
+
+
+        <script type="text/javascript">
+            getMessages();
+        </script>
+
+    </body>
+</html>
