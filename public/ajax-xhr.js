@@ -39,9 +39,6 @@ function getXmlHttpRequest() {
   }
 }
 
-// exports for this module
-module.exports = requestJSON;
-
 // HTTP request/response with JSON
 function requestJSON(callback, method, url, json) {
   // JSON to string

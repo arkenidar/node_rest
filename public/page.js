@@ -1,5 +1,3 @@
-// module for JSON requests via XmlHttpRequest
-var requestJSON = require("./ajax-hxr.js");
 
 // list all messages
 function getMessages()
