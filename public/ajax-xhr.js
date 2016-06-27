@@ -1,13 +1,19 @@
-function requestDo(xmlHttp, async, method, url, data, onReady, headers) {
-  xmlHttp.onreadystatechange = onReady;
-  xmlHttp.open(method, url, async);
+// request with XmlHttpRequest
+function requestXHR(xhr, async, method, url, data, onReady, headers) {
+  // set callback
+  xhr.onreadystatechange = onReady;
+  // open url
+  xhr.open(method, url, async);
+  // set request headers
   for (var header in headers) {
     var value = headers[header];
-    xmlHttp.setRequestHeader(header, value);
+    xhr.setRequestHeader(header, value);
   }
-  xmlHttp.send(data);
+  // send request
+  xhr.send(data);
 }
 
+// get XmlHttpRequest for current browser
 function getXmlHttpRequest() {
   try
   {
@@ -33,22 +39,27 @@ function getXmlHttpRequest() {
   }
 }
 
-module.exports=requestJSON;
+// exports for this module
+module.exports = requestJSON;
 
+// HTTP request/response with JSON
 function requestJSON(callback, method, url, json) {
-  
+  // JSON to string
   var data = JSON.stringify(json);
-  
-  var xmlHttp = getXmlHttpRequest();
+  // get XHR object
+  var xhr = getXmlHttpRequest();
+  // prepare the callback
   var onReady = function () {
-    callback(xmlHttp, method, url);
+    callback(xhr, method, url);
   };
-  
+  // set request headers
   var headers = {};
+  // response is of JSON type
   headers["Accept"] = "application/json";
+  // request is of JSON type
   headers["Content-Type"] = "application/json";
-  
+  // async usage
   var async = true;
-  
-  requestDo(xmlHttp, async, method, url, data, onReady, headers);
+  // do the request
+  requestXHR(xhr, async, method, url, data, onReady, headers);
 }
