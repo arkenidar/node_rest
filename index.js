@@ -6,6 +6,14 @@ app.use(express.static('public'));
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
+app.disable('etag');
+app.disable('view cache');
+app.get('/*', function(req, res, next){
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Last-Modified', (new Date()).toUTCString());
+  next(); 
+});
+
 class Messages {
   constructor(messages) {
     this.messages = messages;
@@ -35,6 +43,7 @@ class Messages {
 var messages = new Messages(["line 1", "line 2", "line 3"]);
 
 app.get("/app/messages/", function (req, res) {
+  res.status(200);
   res.json({"messages": messages.getMessages()});
 });
 
@@ -48,8 +57,10 @@ function found(found, res){
 
 app.get("/app/messages/:id", function (req, res) {
   var messageId = req.params.id;
-  if(found(messages.validId(messageId), res))
+  if(found(messages.validId(messageId), res)){
+    res.status(200);
     res.json({messages: [messages.getMessageById(messageId)]});
+  }
 });
 
 app.delete("/app/messages/:id", function (req, res) {
