@@ -6,10 +6,36 @@ app.use(express.static('public'));
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-var messages = ["line 1", "line 2", "line 3"];
+class Messages {
+  constructor(messages) {
+    this.messages = messages;
+  }
+
+  getMessages() {
+    return this.messages;
+  }
+
+  validId(id) {
+    return id in this.messages;
+  }
+  
+  getMessageById(id) {
+    return this.messages[id];
+  }
+  
+  deleteMessageById(id) {
+    this.messages.splice(id,1);
+  }
+  
+  addMessage(message) {
+    this.messages.push(message);
+  }
+}
+
+var messages = new Messages(["line 1", "line 2", "line 3"]);
 
 app.get("/app/messages/", function (req, res) {
-  res.json({"messages": messages});
+  res.json({"messages": messages.getMessages()});
 });
 
 function found(found, res){
@@ -21,20 +47,22 @@ function found(found, res){
 }
 
 app.get("/app/messages/:id", function (req, res) {
-  if(found(req.params.id in messages, res))
-    res.json({messages: [messages[req.params.id]]});
+  var messageId = req.params.id;
+  if(found(messages.validId(messageId), res))
+    res.json({messages: [messages.getMessageById(messageId)]});
 });
 
 app.delete("/app/messages/:id", function (req, res) {
-  if(found(req.params.id in messages, res)){
-    messages.splice(req.params.id, 1);
+  var messageId = req.params.id;
+  if(found(messages.validId(messageId), res)){
+    messages.deleteMessageById(messageId);
     res.status(204);
     res.end();
   }
 });
 
 app.post("/app/messages/", function (req, res) {
-  messages.push(req.body.msg);
+  messages.addMessage(req.body.msg);
   res.status(201);
   res.setHeader("Location", "/app/messages/"+(messages.length-1));
   res.end();
