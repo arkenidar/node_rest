@@ -8,14 +8,6 @@ app.use(express.static('public'));
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-app.disable('etag');
-app.disable('view cache');
-app.get('/*', function(req, res, next){
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Last-Modified', (new Date()).toUTCString());
-  next(); 
-});
-
 class Messages {
   constructor(messages) {
     this.messages = messages;
@@ -77,7 +69,7 @@ app.delete("/app/messages/:id", function (req, res) {
 app.post("/app/messages/", function (req, res) {
   messages.addMessage(req.body.msg);
   res.status(201);
-  res.setHeader("Location", "/app/messages/"+(messages.length-1));
+  res.setHeader("Location", "/app/messages/"+(messages.getMessages().length-1));
   res.end();
 });
 
